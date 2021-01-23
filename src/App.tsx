@@ -4,6 +4,7 @@ import "./App.css";
 import firebase from "firebase/app";
 import "firebase/auth";
 import { setConstantValue } from "typescript";
+import TodoApp from "./TodoApp";
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 // I guess this is just a global variable that should be expected...
@@ -44,6 +45,7 @@ function App() {
     // User is signed in.
     return (
       <>
+        <TodoApp />
         <p>LOGGED IN</p>
         <button
           onClick={() => {
