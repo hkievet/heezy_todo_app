@@ -10,25 +10,29 @@ export interface ITodoProps {
 
 export const Todo: React.FC<ITodoProps> = (props) => {
   const deleteButton = (
-    <Button
-      onClick={() => {
-        props.onDelete();
-      }}
-      bg={"red.200"}
-      ml="3"
-    >
-      Delete
-    </Button>
+    <Box>
+      <Button
+        onClick={() => {
+          props.onDelete();
+        }}
+        bg={"red.200"}
+        ml="3"
+      >
+        Delete
+      </Button>
+    </Box>
   );
 
   const updateButton = !props.todo?.isFinished ? (
-    <Button
-      onClick={() => {
-        props.onToggleComplete();
-      }}
-    >
-      Mark Finish
-    </Button>
+    <Box>
+      <Button
+        onClick={() => {
+          props.onToggleComplete();
+        }}
+      >
+        Mark Finish
+      </Button>
+    </Box>
   ) : (
     <></>
   );
@@ -52,14 +56,12 @@ export const Todo: React.FC<ITodoProps> = (props) => {
       justify="center"
     >
       <Box mr={5} width={"480px"} alignSelf="center">
-        <Text textAlign={"left"}>
-          {props.todo.message} ({props.todo.id}
-        </Text>
+        <Text textAlign={"left"}>{props.todo.message}</Text>
       </Box>
       <Spacer />
-      <Box>{updateButton}</Box>
+      {updateButton}
       {isComplete}
-      <Box>{deleteButton}</Box>
+      {deleteButton}
     </Flex>
   );
 };

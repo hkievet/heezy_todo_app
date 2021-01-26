@@ -39,6 +39,9 @@ export const TodoApp: React.FC<ITodoAppProps> = (props) => {
   const { userId } = React.useContext(AppContext);
   const [currentInput, setCurrentInput] = React.useState("");
 
+  /**
+   * todo: investigate. I think this might be running more than it needs.
+   */
   React.useEffect(() => {
     if (userId && !state.localVerified) {
       database.ref("todos/" + userId).on("value", (values) => {

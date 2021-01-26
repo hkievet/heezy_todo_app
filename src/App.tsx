@@ -1,5 +1,4 @@
 import React from "react";
-import "./App.css";
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/database";
@@ -11,6 +10,7 @@ import {
   Center,
   ChakraProvider,
   CircularProgress,
+  Text,
 } from "@chakra-ui/react";
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -60,28 +60,31 @@ function App() {
   }, [user, state]);
 
   if (loading) {
-    return <CircularProgress isIndeterminate color="green.300" />;
+    return (
+      <Box>
+        <Center mt={7}>
+          <CircularProgress isIndeterminate />
+        </Center>
+
+        <Center>
+          <Text>This app was made by Hunter Kievet.</Text>
+        </Center>
+      </Box>
+    );
   }
 
   const login = () => {
+    setLoading(true);
     firebase
       .auth()
       .signInWithPopup(provider)
       .then((result) => {
-        //var credential = result.credential;
-        // The signed-in user info.
         var user = result.user;
         setUser(user);
+        setLoading(false);
       })
       .catch((error) => {
-        // Handle Errors here.
-        //var errorCode = error.code;
-        //var errorMessage = error.message;
-        // The email of the user's account used.
-        //var email = error.email;
-        // The firebase.auth.AuthCredential type that was used.
-        //var credential = error.credential;
-        // ...
+        alert("An error happened logging in.  Sorry this app is pretty alpha.");
       });
   };
   const logoff = () => {
@@ -91,7 +94,7 @@ function App() {
       .then(() => {
         setUser(null);
       })
-      .catch((e) => {
+      .catch((error) => {
         alert("error loggin out.  Sorry no ideah why.");
       });
   };
