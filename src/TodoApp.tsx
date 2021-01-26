@@ -1,11 +1,15 @@
+import { Box, Button, FormControl, FormLabel, Input } from "@chakra-ui/react";
 import { networkInterfaces } from "os";
 import * as React from "react";
 import { database } from "./App";
 import AppContext from "./AppContext";
+import { wrapInLayout } from "./AppWrapper";
+import Todo from "./Todo";
 
 export interface ITodoAppState {
   todos: ITodo[];
   localVerified: boolean;
+  initialized: boolean;
 }
 
 const defaultTodoAppState = {
@@ -16,7 +20,7 @@ const defaultTodoAppState = {
 
 export interface ITodoAppProps {}
 
-interface ITodo {
+export interface ITodo {
   message: string;
   id?: string;
 }
@@ -27,8 +31,7 @@ export const TodoApp: React.FC<ITodoAppProps> = (props) => {
   const [currentInput, setCurrentInput] = React.useState("");
 
   React.useEffect(() => {
-    console.log("getting todooos");
-    if (!state.localVerified) {
+    if (!state.localVerified && userId) {
       // take whatever the todos are on the server.
       database
         .ref("todos/" + userId)
@@ -40,7 +43,12 @@ export const TodoApp: React.FC<ITodoAppProps> = (props) => {
             const newTodo = { ...data[todoKey], id: todoKey };
             newTodods.push(newTodo);
           }
-          setState({ ...state, todos: newTodods, localVerified: true });
+          setState({
+            ...state,
+            todos: newTodods,
+            localVerified: true,
+            initialized: true,
+          });
         })
         .catch((e) => {
           console.log("Failed to get todos");
@@ -79,38 +87,35 @@ export const TodoApp: React.FC<ITodoAppProps> = (props) => {
   };
 
   const todoElements = state.todos.map((todo, i) => {
-    let deleteButton: JSX.Element = <></>;
-    if (todo.id) {
-      deleteButton = (
-        <button
-          onClick={() => {
-            deleteTodo(todo?.id);
-          }}
-        >
-          Delete
-        </button>
-      );
-    }
     return (
-      <div key={todo.id ?? i}>
-        <p>{todo.message}</p>
-        {deleteButton}
-      </div>
+      <Todo
+        key={todo.id ?? i}
+        todo={todo}
+        onDelete={() => {
+          deleteTodo(todo?.id);
+        }}
+      />
     );
   });
 
   return (
-    <>
+    <Box width="600px">
       {todoElements}
-      <input
-        onChange={(e: React.FormEvent<HTMLInputElement>) => {
-          setCurrentInput(e.currentTarget.value);
-        }}
-        value={currentInput}
-      ></input>
-      <button onClick={addTodo}>Add</button>
-    </>
+      <Box bg="white" p={5}>
+        <FormControl id="todo" mb={2}>
+          <FormLabel>Todo Name</FormLabel>
+          <Input
+            onChange={(e: React.FormEvent<HTMLInputElement>) => {
+              setCurrentInput(e.currentTarget.value);
+            }}
+            value={currentInput}
+            placeholder={"Add Todos!"}
+          ></Input>
+        </FormControl>
+        <Button onClick={addTodo}>Add</Button>
+      </Box>
+    </Box>
   );
 };
 
-export default TodoApp;
+export default wrapInLayout(TodoApp);

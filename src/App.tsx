@@ -7,6 +7,12 @@ import "firebase/database";
 import { setConstantValue } from "typescript";
 import TodoApp from "./TodoApp";
 import { AppContext, IAppContext } from "./AppContext";
+import {
+  Box,
+  Button,
+  ChakraProvider,
+  CircularProgress,
+} from "@chakra-ui/react";
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 // I guess this is just a global variable that should be expected...
@@ -55,16 +61,18 @@ function App() {
   }, [user, state]);
 
   if (loading) {
-    return <p>Loading</p>;
+    return <CircularProgress isIndeterminate color="green.300" />;
   }
 
   if (user) {
     // User is signed in.
     return (
       <>
-        <AppContext.Provider value={state}>
-          <TodoApp />
-        </AppContext.Provider>
+        <ChakraProvider>
+          <AppContext.Provider value={state}>
+            <TodoApp />
+          </AppContext.Provider>
+        </ChakraProvider>
         <p>LOGGED IN {user.email}</p>
         <button
           onClick={() => {
@@ -85,8 +93,8 @@ function App() {
     );
   } else {
     return (
-      <div>
-        <button
+      <Box>
+        <Button
           onClick={() => {
             firebase
               .auth()
@@ -110,8 +118,8 @@ function App() {
           }}
         >
           Login with GitHub
-        </button>
-      </div>
+        </Button>
+      </Box>
     );
 
     // No user is signed in.
