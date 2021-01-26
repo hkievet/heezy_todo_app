@@ -5,7 +5,7 @@ import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/database";
 import { setConstantValue } from "typescript";
-import TodoApp from "./TodoApp";
+import TodoApp from "./todos/TodoApp";
 import { AppContext, IAppContext } from "./AppContext";
 import {
   Box,

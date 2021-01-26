@@ -9,11 +9,15 @@ export interface ITodoAppHeaderProps {
 
 export const TodoAppHeader: React.FC<ITodoAppHeaderProps> = (props) => {
   return (
-    <Box bg={"white"} mb="2" p="4">
+    <Box bg={"blue.50"} mb="5" p="4">
       <Flex>
-        <Text>Heezy List App</Text>
+        <Text alignSelf={"center"} fontSize={"xl"}>
+          Heezy Todo App, made with Firebase
+        </Text>
         <Spacer />
-        <Button onClick={props.onLogoff}>Log Out</Button>
+        <Button onClick={props.onLogoff} bg={"green.200"}>
+          Log Out
+        </Button>
       </Flex>
     </Box>
   );

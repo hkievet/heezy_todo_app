@@ -1,9 +1,16 @@
-import { Box, Button, FormControl, FormLabel, Input } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  FormControl,
+  FormLabel,
+  Input,
+  Text,
+} from "@chakra-ui/react";
 import { networkInterfaces } from "os";
 import * as React from "react";
-import { database } from "./App";
-import AppContext from "./AppContext";
-import { wrapInLayout } from "./AppWrapper";
+import { database } from "../App";
+import AppContext from "../AppContext";
+import { wrapInLayout } from "../AppWrapper";
 import Todo from "./Todo";
 import TodoAppHeader from "./TodoAppHeader";
 export interface ITodoAppProps {
@@ -107,19 +114,44 @@ export const TodoApp: React.FC<ITodoAppProps> = (props) => {
         onLogoff={props.onLogoff}
         isLoggedIn={!!userId}
       />
-      {todoElements}
+      {todoElements.length ? (
+        <Box bg={"gray.50"} p={5} mb={"5"}>
+          <Text as="h2" fontSize={"xl"} mb={"5"}>
+            Active Todos
+          </Text>
+          {todoElements}
+        </Box>
+      ) : (
+        <></>
+      )}
       <Box bg="white" p={5}>
-        <FormControl id="todo" mb={2}>
-          <FormLabel>Todo Name</FormLabel>
-          <Input
-            onChange={(e: React.FormEvent<HTMLInputElement>) => {
-              setCurrentInput(e.currentTarget.value);
-            }}
-            value={currentInput}
-            placeholder={"Add Todos!"}
-          ></Input>
-        </FormControl>
-        <Button onClick={addTodo}>Add</Button>
+        <Text as="h2" fontSize={"xl"} mb={"5"}>
+          Add a Todo
+        </Text>
+        <form
+          onSubmit={(event) => {
+            event.preventDefault();
+            addTodo();
+          }}
+        >
+          <FormControl id="todo" mb={2}>
+            <FormLabel>Todo Name</FormLabel>
+            <Input
+              onChange={(e: React.FormEvent<HTMLInputElement>) => {
+                setCurrentInput(e.currentTarget.value);
+              }}
+              value={currentInput}
+              placeholder={"Add Todos!"}
+            ></Input>
+          </FormControl>
+          {currentInput.length ? (
+            <Button onClick={addTodo} bg="blue.500" color={"white"}>
+              Add
+            </Button>
+          ) : (
+            <></>
+          )}
+        </form>
       </Box>
     </Box>
   );

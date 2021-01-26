@@ -13,6 +13,7 @@ export const Todo: React.FC<ITodoProps> = (props) => {
       onClick={() => {
         props.onDelete();
       }}
+      bg={"red.200"}
     >
       Delete
     </Button>
@@ -23,7 +24,7 @@ export const Todo: React.FC<ITodoProps> = (props) => {
       bgColor={"white"}
       mb={2}
       borderRadius={5}
-      shadow="Base"
+      shadow="base"
       maxWidth={"600px"}
       justify="center"
     >
