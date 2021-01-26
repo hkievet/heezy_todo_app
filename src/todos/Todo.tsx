@@ -1,9 +1,10 @@
-import { Box, Button, Center, Flex, Spacer, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Spacer, Text } from "@chakra-ui/react";
 import * as React from "react";
 import { ITodo } from "./TodoApp";
 
 export interface ITodoProps {
   onDelete: () => void;
+  onToggleComplete: () => void;
   todo: ITodo;
 }
 
@@ -14,10 +15,32 @@ export const Todo: React.FC<ITodoProps> = (props) => {
         props.onDelete();
       }}
       bg={"red.200"}
+      ml="3"
     >
       Delete
     </Button>
   );
+
+  const updateButton = !props.todo?.isFinished ? (
+    <Button
+      onClick={() => {
+        props.onToggleComplete();
+      }}
+    >
+      Mark Finish
+    </Button>
+  ) : (
+    <></>
+  );
+
+  const isComplete = props.todo?.isFinished ? (
+    <Text alignSelf="center" mr="5">
+      Completed
+    </Text>
+  ) : (
+    <></>
+  );
+
   return (
     <Flex
       p={5}
@@ -29,9 +52,13 @@ export const Todo: React.FC<ITodoProps> = (props) => {
       justify="center"
     >
       <Box mr={5} width={"480px"} alignSelf="center">
-        <Text textAlign={"left"}>{props.todo.message}</Text>
+        <Text textAlign={"left"}>
+          {props.todo.message} ({props.todo.id}
+        </Text>
       </Box>
       <Spacer />
+      <Box>{updateButton}</Box>
+      {isComplete}
       <Box>{deleteButton}</Box>
     </Flex>
   );

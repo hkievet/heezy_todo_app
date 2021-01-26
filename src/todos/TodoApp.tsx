@@ -31,6 +31,7 @@ const defaultTodoAppState = {
 export interface ITodo {
   message: string;
   id?: string;
+  isFinished?: boolean;
 }
 
 export const TodoApp: React.FC<ITodoAppProps> = (props) => {
@@ -39,31 +40,23 @@ export const TodoApp: React.FC<ITodoAppProps> = (props) => {
   const [currentInput, setCurrentInput] = React.useState("");
 
   React.useEffect(() => {
-    if (!state.localVerified && userId) {
-      // take whatever the todos are on the server.
-      database
-        .ref("todos/" + userId)
-        .once("value")
-        .then((values) => {
-          const data = values.val();
-          const newTodods = [];
-          for (const todoKey in data) {
-            const newTodo = { ...data[todoKey], id: todoKey };
-            newTodods.push(newTodo);
-          }
-          setState({
-            ...state,
-            todos: newTodods,
-            localVerified: true,
-            initialized: true,
-          });
-        })
-        .catch((e) => {
-          console.log("Failed to get todos");
-          console.error(e);
+    if (userId && !state.localVerified) {
+      database.ref("todos/" + userId).on("value", (values) => {
+        const data = values.val();
+        const newTodods = [];
+        for (const todoKey in data) {
+          const newTodo = { ...data[todoKey], id: todoKey };
+          newTodods.push(newTodo);
+        }
+        setState({
+          ...state,
+          todos: newTodods,
+          localVerified: true,
+          initialized: true,
         });
+      });
     }
-  }, [state, userId]);
+  }, [userId, state]);
 
   const saveNewTodo = (todo: ITodo) => {
     const newRef = database.ref("todos/" + userId).push();
@@ -76,12 +69,24 @@ export const TodoApp: React.FC<ITodoAppProps> = (props) => {
     if (currentInput) {
       const newTodo = {
         message: currentInput,
+        isFinished: false,
       };
       saveNewTodo(newTodo);
       const newTodos = [...state.todos, newTodo];
       setState({ ...state, todos: newTodos, localVerified: false });
       setCurrentInput("");
     }
+  };
+
+  const completeTodo = (todo: ITodo) => {
+    if (!todo.id) {
+      console.error("no todo...");
+      return;
+    }
+    let updates: any = {};
+    updates["todos/" + userId + "/" + todo.id] = { ...todo, isFinished: true };
+    database.ref().update(updates);
+    setState({ ...state, localVerified: false });
   };
 
   const deleteTodo = (todoId?: string) => {
@@ -101,6 +106,9 @@ export const TodoApp: React.FC<ITodoAppProps> = (props) => {
         todo={todo}
         onDelete={() => {
           deleteTodo(todo?.id);
+        }}
+        onToggleComplete={() => {
+          completeTodo(todo);
         }}
       />
     );
