@@ -6,7 +6,6 @@ import {
   Input,
   Text,
 } from "@chakra-ui/react";
-import { networkInterfaces } from "os";
 import * as React from "react";
 import { database } from "../App";
 import AppContext from "../AppContext";
@@ -114,17 +113,7 @@ export const TodoApp: React.FC<ITodoAppProps> = (props) => {
         onLogoff={props.onLogoff}
         isLoggedIn={!!userId}
       />
-      {todoElements.length ? (
-        <Box bg={"gray.50"} p={5} mb={"5"}>
-          <Text as="h2" fontSize={"xl"} mb={"5"}>
-            Active Todos
-          </Text>
-          {todoElements}
-        </Box>
-      ) : (
-        <></>
-      )}
-      <Box bg="white" p={5}>
+      <Box bg="white" p={5} mb={"5"}>
         <Text as="h2" fontSize={"xl"} mb={"5"}>
           Add a Todo
         </Text>
@@ -153,6 +142,16 @@ export const TodoApp: React.FC<ITodoAppProps> = (props) => {
           )}
         </form>
       </Box>
+      {todoElements.length ? (
+        <Box bg={"gray.50"} p={5} mb={"5"}>
+          <Text as="h2" fontSize={"xl"} mb={"5"}>
+            Active Todos
+          </Text>
+          {todoElements}
+        </Box>
+      ) : (
+        <></>
+      )}
     </Box>
   );
 };
