@@ -5,6 +5,10 @@ import { database } from "./App";
 import AppContext from "./AppContext";
 import { wrapInLayout } from "./AppWrapper";
 import Todo from "./Todo";
+import TodoAppHeader from "./TodoAppHeader";
+export interface ITodoAppProps {
+  onLogoff: () => void;
+}
 
 export interface ITodoAppState {
   todos: ITodo[];
@@ -17,8 +21,6 @@ const defaultTodoAppState = {
   localVerified: false,
   initialized: false,
 };
-
-export interface ITodoAppProps {}
 
 export interface ITodo {
   message: string;
@@ -100,6 +102,11 @@ export const TodoApp: React.FC<ITodoAppProps> = (props) => {
 
   return (
     <Box width="600px">
+      <TodoAppHeader
+        onLogin={() => {}}
+        onLogoff={props.onLogoff}
+        isLoggedIn={!!userId}
+      />
       {todoElements}
       <Box bg="white" p={5}>
         <FormControl id="todo" mb={2}>

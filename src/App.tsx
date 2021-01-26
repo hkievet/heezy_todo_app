@@ -10,6 +10,7 @@ import { AppContext, IAppContext } from "./AppContext";
 import {
   Box,
   Button,
+  Center,
   ChakraProvider,
   CircularProgress,
 } from "@chakra-ui/react";
@@ -64,62 +65,59 @@ function App() {
     return <CircularProgress isIndeterminate color="green.300" />;
   }
 
+  const login = () => {
+    firebase
+      .auth()
+      .signInWithPopup(provider)
+      .then((result) => {
+        var credential = result.credential;
+        // The signed-in user info.
+        var user = result.user;
+        setUser(user);
+      })
+      .catch((error) => {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        // The email of the user's account used.
+        var email = error.email;
+        // The firebase.auth.AuthCredential type that was used.
+        var credential = error.credential;
+        // ...
+      });
+  };
+  const logoff = () => {
+    firebase
+      .auth()
+      .signOut()
+      .then(() => {
+        setUser(null);
+      })
+      .catch((e) => {
+        alert("error loggin out.  Sorry no ideah why.");
+      });
+  };
+
   if (user) {
     // User is signed in.
     return (
       <>
         <ChakraProvider>
           <AppContext.Provider value={state}>
-            <TodoApp />
+            <TodoApp onLogoff={logoff} />
           </AppContext.Provider>
         </ChakraProvider>
-        <p>LOGGED IN {user.email}</p>
-        <button
-          onClick={() => {
-            firebase
-              .auth()
-              .signOut()
-              .then(() => {
-                setUser(null);
-              })
-              .catch((e) => {
-                alert("error loggin out.  Sorry no ideah why.");
-              });
-          }}
-        >
-          Log out
-        </button>
       </>
     );
   } else {
     return (
-      <Box>
-        <Button
-          onClick={() => {
-            firebase
-              .auth()
-              .signInWithPopup(provider)
-              .then((result) => {
-                var credential = result.credential;
-                // The signed-in user info.
-                var user = result.user;
-                setUser(user);
-              })
-              .catch((error) => {
-                // Handle Errors here.
-                var errorCode = error.code;
-                var errorMessage = error.message;
-                // The email of the user's account used.
-                var email = error.email;
-                // The firebase.auth.AuthCredential type that was used.
-                var credential = error.credential;
-                // ...
-              });
-          }}
-        >
-          Login with GitHub
-        </Button>
-      </Box>
+      <ChakraProvider>
+        <Center mt="5">
+          <Box>
+            <Button onClick={login}>Login with GitHub</Button>
+          </Box>
+        </Center>
+      </ChakraProvider>
     );
 
     // No user is signed in.
