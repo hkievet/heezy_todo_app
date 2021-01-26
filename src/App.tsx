@@ -3,8 +3,10 @@ import logo from "./logo.svg";
 import "./App.css";
 import firebase from "firebase/app";
 import "firebase/auth";
+import "firebase/database";
 import { setConstantValue } from "typescript";
 import TodoApp from "./TodoApp";
+import { AppContext, IAppContext } from "./AppContext";
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 // I guess this is just a global variable that should be expected...
@@ -16,15 +18,24 @@ const firebaseConfig = {
   messagingSenderId: "1048297251395",
   appId: "1:1048297251395:web:358458129485ac43f82af6",
   measurementId: "G-9RYB2WLCSS",
+  databaseURL: "https://todo-d3b49-default-rtdb.firebaseio.com/",
 };
 
 firebase.initializeApp(firebaseConfig);
 firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION);
 const provider = new firebase.auth.GithubAuthProvider();
 
+// get the firebase database object, requires the databaseURL in the config.
+export const database = firebase.database();
+
+const defaultState: IAppContext = {
+  userId: "",
+};
+
 function App() {
+  const [state, setState] = React.useState(defaultState);
   const [loading, setLoading] = React.useState(true);
-  const [user, setUser] = React.useState<any>();
+  const [user, setUser] = React.useState<firebase.User | null>();
   React.useEffect(() => {
     const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
       // detaching the listener
@@ -37,6 +48,12 @@ function App() {
     return () => unsubscribe(); // unsubscribing from the listener when the component is unmounting.
   }, []);
 
+  React.useEffect(() => {
+    if (state.userId !== user?.uid) {
+      setState({ ...state, userId: user?.uid });
+    }
+  }, [user, state]);
+
   if (loading) {
     return <p>Loading</p>;
   }
@@ -45,8 +62,10 @@ function App() {
     // User is signed in.
     return (
       <>
-        <TodoApp />
-        <p>LOGGED IN</p>
+        <AppContext.Provider value={state}>
+          <TodoApp />
+        </AppContext.Provider>
+        <p>LOGGED IN {user.email}</p>
         <button
           onClick={() => {
             firebase
