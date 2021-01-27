@@ -44,10 +44,8 @@ function App() {
   React.useEffect(() => {
     const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
       // detaching the listener
-      if (user) {
-        // ...your code to handle authenticated users.
-        setUser(user);
-      }
+      // ...your code to handle authenticated users.
+      setUser(user);
       setLoading(false);
     });
     return () => unsubscribe(); // unsubscribing from the listener when the component is unmounting.
@@ -80,13 +78,16 @@ function App() {
       .signInWithPopup(provider)
       .then((result) => {
         var user = result.user;
-        setUser(user);
-        setLoading(false);
+        if (user) {
+          setUser(user);
+          setLoading(false);
+        }
       })
       .catch((error) => {
         alert("An error happened logging in.  Sorry this app is pretty alpha.");
       });
   };
+
   const logoff = () => {
     firebase
       .auth()
@@ -120,8 +121,6 @@ function App() {
         </Center>
       </ChakraProvider>
     );
-
-    // No user is signed in.
   }
 }
 
