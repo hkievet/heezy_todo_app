@@ -44,7 +44,8 @@ export const TodoApp: React.FC<ITodoAppProps> = (props) => {
    */
   React.useEffect(() => {
     if (userId && !state.localVerified) {
-      database.ref("todos/" + userId).on("value", (values) => {
+      const ref = database.ref("todos/" + userId);
+      ref.on("value", (values) => {
         const data = values.val();
         const newTodods = [];
         for (const todoKey in data) {
@@ -58,6 +59,9 @@ export const TodoApp: React.FC<ITodoAppProps> = (props) => {
           initialized: true,
         });
       });
+      return () => {
+        ref.off();
+      };
     }
   }, [userId, state]);
 
